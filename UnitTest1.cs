@@ -43,13 +43,14 @@ namespace DotNetNotes.Test
         public void UpdateNote()
         {
             // We don't have a Note-Service, so we work on the Model
-            Models.Note note = new Models.Note();
-            note.Id = 777;
-            note.Priority = 3;
-            note.Title = "New Note";
-            note.Text = "Test Note";
-            note.DueDate = DateTime.Now;
-
+            Models.Note note = new Models.Note
+            {
+                Id = 777,
+                Priority = 3,
+                Title = "New Note",
+                Text = "Test Note",
+                DueDate = DateTime.Now
+            };
             note.Title = "Updated Note";
             Assert.Equal("Updated Note", note.Title);
         }
