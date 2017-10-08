@@ -38,5 +38,20 @@ namespace DotNetNotes.Test
             // Note should not exist (404)
             Assert.Equal("NotFound", testStatusCode);
         }
+
+        [Fact]
+        public void UpdateNote()
+        {
+            // We don't have a Note-Service, so we work on the Model
+            Models.Note note = new Models.Note();
+            note.Id = 777;
+            note.Priority = 3;
+            note.Title = "New Note";
+            note.Text = "Test Note";
+            note.DueDate = DateTime.Now;
+
+            note.Title = "Updated Note";
+            Assert.Equal("Updated Note", note.Title);
+        }
     }
 }
