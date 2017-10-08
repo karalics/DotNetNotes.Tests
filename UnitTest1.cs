@@ -3,6 +3,9 @@ using Xunit;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Hosting;
 using DotNetNotes;
+using System;
+using Xunit.Abstractions;
+using System.IO;
 
 namespace DotNetNotes.Test
 {
@@ -10,11 +13,17 @@ namespace DotNetNotes.Test
     {
         private readonly TestServer _server;
         private readonly HttpClient _client;
+        private readonly ITestOutputHelper output;
 
-        public UnitTest1()
+        public UnitTest1(ITestOutputHelper output)
         {
+            // For Debuging write to output
+            this.output = output;
+            string testpath = Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationBasePath;
+            testpath = testpath.Substring(0, testpath.IndexOf("DotNetNotes.Tests"));
+            var contentroot = Path.Combine(testpath, "DotNetNotes");
             _server = new TestServer(new WebHostBuilder()
-                .UseContentRoot(contentRoot: "/home/slavi/dotnet/DotNetNotes")
+                .UseContentRoot(contentRoot: contentroot)
                 .UseEnvironment(environment: "Development")
                 .UseStartup<DotNetNotes.Startup>()
                 .UseApplicationInsights());
@@ -22,13 +31,12 @@ namespace DotNetNotes.Test
         }
 
         [Fact]
-        public async void Test1()
+        public async void NoteDoesntExist()
         {
-            var response = await _client.GetAsync("/");
-            //response.EnsureSuccessStatusCode();
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            Assert.True(responseString.Contains("Note"));
+            var response = await _client.GetAsync("/Note/Edit/777");
+            string testStatusCode = response.StatusCode.ToString();
+            // Note should not exist (404)
+            Assert.Equal("NotFound", testStatusCode);
         }
     }
 }
